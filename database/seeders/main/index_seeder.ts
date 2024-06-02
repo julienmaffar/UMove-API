@@ -20,5 +20,6 @@ export default class extends BaseSeeder {
     await this.seed(await import('#database/seeders/exercise_seeder'))
     await this.seed(await import('#database/seeders/training_seeder'))
     await this.seed(await import('#database/seeders/category_seeder'))
+    await this.seed(await import('#database/seeders/equipment_seeder'))
   }
 }

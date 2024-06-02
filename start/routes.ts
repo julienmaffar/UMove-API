@@ -12,6 +12,7 @@ import { middleware } from './kernel.js'
 
 const UsersController = () => import('#controllers/users_controller')
 const TrainingsController = () => import('#controllers/trainings_controller')
+const EquipmentsController = () => import('#controllers/equipments_controller')
 
 // Users
 router.post('users/register', [UsersController, 'register'])
@@ -20,5 +21,11 @@ router.post('users/login', [UsersController, 'login'])
 // Trainings
 router
   .resource('trainings', TrainingsController)
+  .only(['index', 'show'])
+  .use(['index', 'show'], middleware.auth({ guards: ['api'] }))
+
+// Equipments
+router
+  .resource('equipments', EquipmentsController)
   .only(['index', 'show'])
   .use(['index', 'show'], middleware.auth({ guards: ['api'] }))
