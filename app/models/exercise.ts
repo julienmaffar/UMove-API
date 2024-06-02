@@ -1,4 +1,6 @@
-import { BaseModel, column, computed } from '@adonisjs/lucid/orm'
+import { BaseModel, column, computed, manyToMany } from '@adonisjs/lucid/orm'
+import Category from './category.js'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Exercise extends BaseModel {
   @column({ isPrimary: true })
@@ -27,4 +29,9 @@ export default class Exercise extends BaseModel {
   get step() {
     return this.$extras.pivot_step
   }
+
+  @manyToMany(() => Category, {
+    pivotTable: 'category_exercise',
+  })
+  declare categories: ManyToMany<typeof Category>
 }

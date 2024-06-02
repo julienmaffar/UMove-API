@@ -11,4 +11,4 @@ import router from '@adonisjs/core/services/router'
 
 const TrainingsController = () => import('#controllers/trainings_controller')
 
-router.resource('trainings', TrainingsController).apiOnly().only(['index'])
+router.resource('trainings', TrainingsController).apiOnly().only(['index', 'show'])
