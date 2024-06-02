@@ -13,11 +13,6 @@ export default class TrainingsController {
     })
   }
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request }: HttpContext) {}
-
   async show({ params, response }: HttpContext) {
     const training = await Training.query()
       .where('id', params.id)
@@ -32,13 +27,9 @@ export default class TrainingsController {
     })
   }
 
-  /**
-   * Handle form submission for the edit action
-   */
-  async update({ params, request }: HttpContext) {}
+  // async store({ request }: HttpContext) {}
 
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {}
+  // async update({ params, request }: HttpContext) {}
+
+  // async destroy({ params }: HttpContext) {}
 }

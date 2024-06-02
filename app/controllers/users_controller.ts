@@ -1,38 +1,40 @@
-import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
+import { ResponseStatus, type HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
-  /**
-   * Display a list of resource
-   */
-  async index({}: HttpContext) {}
+  async login({ request, response }: HttpContext) {
+    const { email, password } = request.only(['email', 'password'])
+    const user = await User.verifyCredentials(email, password)
+    const token = await User.accessTokens.create(user)
 
-  /**
-   * Display form to create a new record
-   */
-  async create({}: HttpContext) {}
+    return response.json({
+      status: ResponseStatus.Ok,
+      data: token,
+    })
+  }
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request }: HttpContext) {}
+  async register({ request, response }: HttpContext) {
+    const credentials = request.only(['username', 'email', 'password', 'weight'])
 
-  /**
-   * Show individual record
-   */
-  async show({ params }: HttpContext) {}
+    await User.create({
+      username: credentials.username,
+      email: credentials.email,
+      password: credentials.password,
+      weight: credentials.weight,
+    })
 
-  /**
-   * Edit individual record
-   */
-  async edit({ params }: HttpContext) {}
+    return response.json({
+      status: ResponseStatus.Ok,
+    })
+  }
 
-  /**
-   * Handle form submission for the edit action
-   */
-  async update({ params, request }: HttpContext) {}
+  // async index({}: HttpContext) {}
 
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {}
+  // async store({ request }: HttpContext) {}
+
+  // async show({ params }: HttpContext) {}
+
+  // async edit({ params }: HttpContext) {}
+
+  // async destroy({ params }: HttpContext) {}
 }

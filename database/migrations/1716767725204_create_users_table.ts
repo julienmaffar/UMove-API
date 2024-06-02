@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.string('username').notNullable()
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
-      table.float('weight', 2).defaultTo(0)
+      table.float('weight').defaultTo(0)
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
