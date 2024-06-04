@@ -1,5 +1,6 @@
 import { deleteEquipment, editEquipment } from '#abilities/main'
 import Equipment from '#models/equipment'
+import { createEquipmentValidator, updateEquipmentValidator } from '#validators/equipment_validator'
 import { ResponseStatus, type HttpContext } from '@adonisjs/core/http'
 
 export default class EquipmentsController {
@@ -24,14 +25,10 @@ export default class EquipmentsController {
     if (await bouncer.denies(editEquipment))
       return response.abort(null, ResponseStatus.Unauthorized)
 
-    const { name, picture, home, gym } = request.only(['name', 'picture', 'home', 'gym'])
+    const data = request.all()
+    const payload = await createEquipmentValidator.validate(data)
 
-    const equipment = await Equipment.create({
-      name,
-      picture,
-      home,
-      gym,
-    })
+    const equipment = await Equipment.create(payload)
 
     return response.json({
       status: ResponseStatus.Created,
@@ -52,10 +49,11 @@ export default class EquipmentsController {
     if (await bouncer.denies(editEquipment))
       return response.abort(null, ResponseStatus.Unauthorized)
 
-    const { name, picture, home, gym } = request.only(['name', 'picture', 'home', 'gym'])
+    const data = request.all()
+    const payload = await updateEquipmentValidator.validate(data)
 
     const equipment = await Equipment.findByOrFail({ id: params.id })
-    await equipment.merge({ name, picture, home, gym }).save()
+    await equipment.merge(payload).save()
 
     return response.json({
       status: ResponseStatus.Ok,
