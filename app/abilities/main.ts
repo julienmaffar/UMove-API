@@ -23,12 +23,22 @@ export const editUser = Bouncer.ability(() => {
   return true
 })
 
-// EQUIPMENTS
+// Equipments
 
 export const editEquipment = Bouncer.ability((user: User) => {
   return !!user.admin
 })
 
 export const deleteEquipment = Bouncer.ability((user: User) => {
+  return !!user.admin
+})
+
+// Categories
+
+export const editCategory = Bouncer.ability((user: User) => {
+  return !!user.admin
+})
+
+export const deleteCategory = Bouncer.ability((user: User) => {
   return !!user.admin
 })
