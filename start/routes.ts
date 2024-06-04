@@ -27,5 +27,5 @@ router
 // Equipments
 router
   .resource('equipments', EquipmentsController)
-  .only(['index', 'show'])
-  .use(['index', 'show'], middleware.auth({ guards: ['api'] }))
+  .use(['index', 'show', 'destroy', 'store', 'update'], middleware.auth({ guards: ['api'] }))
+  .apiOnly()
