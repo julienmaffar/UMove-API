@@ -1,5 +1,7 @@
 import { ResponseStatus, type HttpContext } from '@adonisjs/core/http'
 import Training from '#models/training'
+import { addWorkoutsTrainingValidator } from '#validators/training_validator'
+import db from '@adonisjs/lucid/services/db'
 
 export default class TrainingsController {
   async index({ response }: HttpContext) {
@@ -9,7 +11,15 @@ export default class TrainingsController {
 
     return response.json({
       status: ResponseStatus.Ok,
-      data: trainings,
+      data: trainings.map((training) => {
+        const trainingSerialize = training.serialize({
+          fields: {
+            omit: ['description', 'workouts'],
+          },
+        })
+        delete trainingSerialize.exercises
+        return { ...trainingSerialize }
+      }),
     })
   }
 
@@ -17,13 +27,37 @@ export default class TrainingsController {
     const training = await Training.query()
       .where('id', params.id)
       .preload('exercises', (exercisesQuery) => {
-        exercisesQuery.preload('categories')
+        exercisesQuery.preload('categories').preload('equipments')
       })
       .first()
 
+    const trainingSerialize = training?.serialize()
+    delete trainingSerialize?.exercises
+
     return response.json({
       status: ResponseStatus.Ok,
-      data: training,
+      data: trainingSerialize,
+    })
+  }
+
+  async addWorkouts({ params, request, response }: HttpContext) {
+    const data = request.all()
+    const payload = await addWorkoutsTrainingValidator.validate(data)
+
+    const training = await Training.findByOrFail({ id: params.id })
+
+    for (const workout of payload.workouts) {
+      await db.table('training_exercise').insert({
+        training_id: training.id,
+        exercise_id: workout.exercise_id,
+        step: workout.step,
+        mode: workout.mode,
+        reps: workout.reps,
+      })
+    }
+
+    return response.json({
+      status: ResponseStatus.Ok,
     })
   }
 

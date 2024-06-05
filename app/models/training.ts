@@ -4,6 +4,8 @@ import Exercise from './exercise.js'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Training extends BaseModel {
+  static table = 'trainings'
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -36,6 +38,40 @@ export default class Training extends BaseModel {
     })
 
     return Array.from(categories)
+  }
+
+  @computed()
+  get equipments() {
+    const equipments = new Map()
+
+    this.exercises.forEach((exercise) => {
+      exercise.equipments.forEach((equipment) => {
+        equipments.set(equipment.id, { name: equipment.name, picture: equipment.picture })
+      })
+    })
+
+    return Array.from(equipments.values())
+  }
+
+  @computed()
+  get workouts() {
+    const exercises = this.exercises.sort((a, b) => a.step - b.step)
+
+    const groupedItems = []
+    let currentStep = 1
+    let currentGroup = []
+
+    for (const exercise of exercises) {
+      if (exercise.step !== currentStep) {
+        if (currentGroup.length > 0) groupedItems.push(currentGroup)
+        currentGroup = []
+        currentStep = exercise.step
+      }
+      currentGroup.push(exercise)
+    }
+    if (currentGroup.length > 0) groupedItems.push(currentGroup)
+
+    return groupedItems
   }
 
   @manyToMany(() => Exercise, {

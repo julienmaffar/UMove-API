@@ -3,6 +3,8 @@ import Exercise from './exercise.js'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Category extends BaseModel {
+  static table = 'categories'
+
   @column({ isPrimary: true })
   declare id: number
 

@@ -1,8 +1,11 @@
 import { BaseModel, column, computed, manyToMany } from '@adonisjs/lucid/orm'
 import Category from './category.js'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import Equipment from './equipment.js'
 
 export default class Exercise extends BaseModel {
+  static table = 'exercises'
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -34,4 +37,9 @@ export default class Exercise extends BaseModel {
     pivotTable: 'category_exercise',
   })
   declare categories: ManyToMany<typeof Category>
+
+  @manyToMany(() => Equipment, {
+    pivotTable: 'exercise_equipment',
+  })
+  declare equipments: ManyToMany<typeof Equipment>
 }
